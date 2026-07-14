@@ -4,13 +4,15 @@ const { WebSocketServer } = require('ws');
 const jwt = require('jsonwebtoken');
 const url = require('url');
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
+
+const rawOrigins = process.env.CORS_ORIGIN; 
+const allowedOrigins = rawOrigins.split(',');
 
 // HTTP server for health check + CORS preflight
 const server = http.createServer((req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', CORS_ORIGIN);
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigins);
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
