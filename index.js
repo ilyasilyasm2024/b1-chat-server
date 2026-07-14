@@ -4,7 +4,7 @@ const { WebSocketServer } = require('ws');
 const jwt = require('jsonwebtoken');
 const url = require('url');
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const rawOrigins = process.env.CORS_ORIGIN || '*';
