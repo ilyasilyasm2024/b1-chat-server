@@ -1,0 +1,14 @@
+{
+  "name": "b1-chat-server",
+  "version": "1.0.0",
+  "description": "WebSocket chat relay for B1 Prüfungsvorbereitung",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0",
+    "jsonwebtoken": "^9.0.3",
+    "dotenv": "^17.4.2"
+  }
+}
