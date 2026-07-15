@@ -62,6 +62,12 @@ wss.on('connection', (ws, req) => {
   // Attach user info to the socket
   ws.username = decoded.username;
   ws.userId = decoded.userId;
+  ws.messageCount = 0;
+  ws.lastReset = Date.now();
+
+  // Rate limit: max 10 messages per 30 seconds per user
+  const RATE_LIMIT = 10;
+  const RATE_WINDOW = 30000; // 30s
 
   console.log(`[+] ${ws.username} connected. Total: ${wss.clients.size}`);
 
@@ -86,8 +92,25 @@ wss.on('connection', (ws, req) => {
     try {
       const msg = JSON.parse(data.toString());
 
-      // Validate
+      // Validate message content
       if (!msg.text || typeof msg.text !== 'string' || msg.text.length > 200) return;
+
+      // Rate limiting: reset counter if window has passed
+      const now = Date.now();
+      if (now - ws.lastReset > RATE_WINDOW) {
+        ws.messageCount = 0;
+        ws.lastReset = now;
+      }
+      ws.messageCount++;
+      if (ws.messageCount > RATE_LIMIT) {
+        ws.send(JSON.stringify({
+          id: 'system-ratelimit-' + now,
+          username: 'System',
+          text: '⚠️ Zu viele Nachrichten. Bitte warte einen Moment.',
+          timestamp: now,
+        }));
+        return;
+      }
 
       const broadcast = JSON.stringify({
         id: Date.now().toString() + Math.random().toString(36).slice(2, 6),
